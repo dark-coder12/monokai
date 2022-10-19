@@ -1,5 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.plaf.ColorChooserUI;
 import java.io.*;
 import java.awt.event.*;
 class CodeEditor extends JFrame {
@@ -10,8 +11,8 @@ class CodeEditor extends JFrame {
     JTextArea codingArea;
     File chosenFile;
     boolean fileOpened = false;
-    CodeEditor()
-    {
+
+    CodeEditor() {
         codeFrame = new JFrame("Code Editor");
 
         codeFrame.setSize(1000, 700);
@@ -19,7 +20,6 @@ class CodeEditor extends JFrame {
 
         codingArea = new JTextArea();
         JMenuBar nav = new JMenuBar();
-        JMenuBar nav2 = new JMenuBar();
 
         JScrollPane scroll = new JScrollPane(codingArea);
 
@@ -43,10 +43,9 @@ class CodeEditor extends JFrame {
         colorMenu.add(solarizedDark);
 
         nav.add(fileMenu);
-        nav2.add(colorMenu);
+        nav.add(colorMenu);
 
         codeFrame.setJMenuBar(nav);
-        codeFrame.setJMenuBar(nav2);
         codeFrame.add(scroll);
 
         codeFrame.setVisible(true);
@@ -65,13 +64,13 @@ class CodeEditor extends JFrame {
                 JFileChooser openFCmd = new JFileChooser("f:");
                 int dialog = openFCmd.showOpenDialog(null);
 
-                if(dialog == JFileChooser.APPROVE_OPTION){
+                if (dialog == JFileChooser.APPROVE_OPTION) {
 
                     fileOpened = true;
                     chosenFile = new File(openFCmd.getSelectedFile().getAbsolutePath());
                     openedName = openFCmd.getSelectedFile().getName();
 
-                    try{
+                    try {
 
                         String reader;
 
@@ -82,15 +81,14 @@ class CodeEditor extends JFrame {
 
                         reader = br.readLine();
 
-                        while(reader != null){
+                        while (reader != null) {
 
-                            currText =  currText + " \n" + reader;
+                            currText = currText + " \n" + reader;
                             reader = br.readLine();
                         }
 
                         codingArea.setText(currText);
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         JOptionPane.showMessageDialog(null, "File could not be opened");
                     }
                 }
@@ -103,12 +101,11 @@ class CodeEditor extends JFrame {
 
                 JFileChooser saveCmd;
 
-                if(fileOpened == true){
+                if (fileOpened == true) {
                     saveCmd = new JFileChooser(chosenFile.getAbsolutePath());
                     saveCmd.setSelectedFile(new File(openedName));
-                }
-                else
-                saveCmd = new JFileChooser("f:");
+                } else
+                    saveCmd = new JFileChooser("f:");
 
                 int dialog = saveCmd.showSaveDialog(null);
 
@@ -129,6 +126,38 @@ class CodeEditor extends JFrame {
             }
         });
 
+        monokaiTheme.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        solarizedDark.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codingArea.setBackground(Color.decode("#002b36"));
+                codingArea.setForeground(Color.decode("#A6E22E"));
+                codingArea.setFont(new Font("JetBrains Mono", Font.ITALIC, 14));
+
+            }
+        });
+
+        openPalette.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                ColorPicker codeThemes = new ColorPicker(null);
+                codeThemes.chosenColor.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        codingArea.setBackground(codeThemes.colorPicker.getColor());
+                        codeThemes.dispose();
+                    }
+                });
+            }
+        });
     }
 
     public static void main(String args[])
